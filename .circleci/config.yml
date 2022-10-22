@@ -1,6 +1,31 @@
 version: 2.1
 
+orbs:
+  slack: circleci/slack@4.10.1
+
 jobs:
+  notify:
+    docker:
+      - image: "cimg/base:stable"
+    steps:
+      - slack/notify:
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "plain_text",
+                      "text": "*This is a text notification*",
+                      "emoji": true
+                    }
+                  ]
+                }
+              ]
+            }
+          event: always
+
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -71,7 +96,6 @@ jobs:
             # npm install oauth-sign@^0.9.0
             npm audit fix --audit-level=critical --force
             # If the "npm audit fix" command above could not fix all critical vulnerabilities, try “npm audit fix --force” again
-            npm audit --audit-level=critical
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -92,3 +116,5 @@ workflows:
       - scan-backend:
           requires:
             - build-backend
+      - notify:
+          context: slack-secrets
