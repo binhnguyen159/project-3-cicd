@@ -1,7 +1,6 @@
 version: 2.1
 
 jobs:
-
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -12,6 +11,17 @@ jobs:
             cd frontend
             npm install
             npm run build
+
+  test-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          command: |
+            cd frontend
+            npm install
+            npm run test
 
   build-backend:
     docker:
@@ -24,10 +34,27 @@ jobs:
             npm install
             npm run build
 
+  test-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          command: |
+            cd backend
+            npm install
+            npm run test
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   p3-workflow:
     jobs:
-      - build-frontend
-      - build-backend
+      - test-frontend
+      - test-frontend
+      - build-frontend:
+          requires:
+            - test-frontend
+      - build-backend:
+          requires:
+            - test-frontend
