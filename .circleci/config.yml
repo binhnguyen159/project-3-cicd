@@ -132,7 +132,7 @@ jobs:
       - run:
           name: Fetch and save the old pipeline ID (bucket name) responsible for the last release.
           command: |
-            ec2-3-84-15-243.compute-1.amazonaws.com > ~/textfile.txt
+            echo "ec2-3-84-15-243.compute-1.amazonaws.com" > ~/textfile.txt
       - persist_to_workspace:
           root: ~/
           paths:
