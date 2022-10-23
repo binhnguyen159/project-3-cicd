@@ -124,27 +124,17 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: amazon/aws-cli
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - run:
-        command: |
-            yum install -y tar gzip
-            apk add --update ansible
       - add_ssh_keys:
           fingerprints: ["d1:23:97:c1:61:b3:bc:13:43:10:11:32:2e:28:6c:70"]
       - run:
-          name: Fetch and save the old pipeline ID (bucket name) responsible for the last release.
+          name: Install dependencies
           command: |
-            aws cloudformation \
-            list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
-            --no-paginate --output text > ~/textfile.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - textfile.txt
+            apk add --update ansible
       - run:
-          name: Run playbook and configure server
+          name: Configure server
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
