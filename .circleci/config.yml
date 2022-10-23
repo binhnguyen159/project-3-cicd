@@ -129,10 +129,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["d1:23:97:c1:61:b3:bc:13:43:10:11:32:2e:28:6c:70"]
-      - run:
-          name: Fetch and save the old pipeline ID (bucket name) responsible for the last release.
-          command: |
-            echo "ec2-3-84-15-243.compute-1.amazonaws.com" > ~/textfile.txt
+      # - run:  echo "hello world" > ~/output.txt
       - persist_to_workspace:
           root: ~/
           paths:
