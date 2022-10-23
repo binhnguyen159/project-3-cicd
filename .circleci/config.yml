@@ -20,25 +20,6 @@ commands:
             exit 1
 
 jobs:
-    steps:
-      - slack/notify:
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "*This is a text notification*",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: always
-
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -128,7 +109,7 @@ jobs:
             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
             --tags project=udapeople
             exit 1
-      - destroy_environment:
+      - destroy-environment:
           stack-name: udapeople-frontend
 
       - run:
@@ -140,7 +121,7 @@ jobs:
             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
             --tags project=udapeople
             exit 1
-      - destroy_environment:
+      - destroy-environment:
           stack-name: udapeople-backend
 
   # configure-infrastructure:
