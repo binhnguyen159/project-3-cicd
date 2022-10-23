@@ -124,12 +124,13 @@ jobs:
 
   configure-infrastructure:
     docker:
-      - image: [python:3.7-alpine3.11, amazon/aws-cli]
+      - image: python:3.7-alpine3.11
+      - image: amazon/aws-cli
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints: ["d1:23:97:c1:61:b3:bc:13:43:10:11:32:2e:28:6c:70"]
-       - run:
+      - run:
           name: Fetch and save the old pipeline ID (bucket name) responsible for the last release.
           command: |
             aws cloudformation \
