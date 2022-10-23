@@ -127,10 +127,9 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - run: yum install -y tar gzip
       - run:
-          name: Install ansible
-          command: |
+        command: |
+            yum install -y tar gzip
             apk add --update ansible
       - add_ssh_keys:
           fingerprints: ["d1:23:97:c1:61:b3:bc:13:43:10:11:32:2e:28:6c:70"]
