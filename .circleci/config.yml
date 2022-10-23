@@ -285,6 +285,18 @@ jobs:
             && pip3 install --upgrade pip \
             && pip3 install awscli
       - run:
+          command: |
+              echo ENVIROMENT=production > "backend/dist/.env"
+              echo TYPEORM_CONNECTION=postgres >> "backend/dist/.env"
+              echo TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js} >> "backend/dist/.env"
+              echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/dist/.env"
+              echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/dist/.env"
+              echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/dist/.env"
+              echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> "backend/dist/.env"
+              echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> "backend/dist/.env"
+              echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/dist/.env"
+              echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/dist/.env"
+      - run:
           name: Deploy backend
           no_output_timeout: 30m
           command: |
@@ -356,35 +368,35 @@ jobs:
 workflows:
   p3-workflow:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires:
-            - build-frontend
-      - test-backend:
-          requires:
-            - build-backend
-      - scan-frontend:
-          requires:
-            - build-frontend
-      - scan-backend:
-          requires:
-            - build-backend
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      - configure-infrastructure:
-          requires:
-            - deploy-infrastructure
-      - run-migrations:
-          requires:
-            - configure-infrastructure
-      - deploy-frontend:
-          requires:
-            - run-migrations
-      - deploy-backend:
-          requires:
-            - run-migrations
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires:
+      #       - build-frontend
+      # - test-backend:
+      #     requires:
+      #       - build-backend
+      # - scan-frontend:
+      #     requires:
+      #       - build-frontend
+      # - scan-backend:
+      #     requires:
+      #       - build-backend
+      # - deploy-infrastructure:
+      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      # - configure-infrastructure:
+      #     requires:
+      #       - deploy-infrastructure
+      # - run-migrations:
+      #     requires:
+      #       - configure-infrastructure
+      # - deploy-frontend:
+      #     requires:
+      #       - run-migrations
+      - deploy-backend #:
+          # requires:
+          #   - run-migrations
       - smoke-test:
           requires:
-            - deploy-frontend
+            # - deploy-frontend
             - deploy-backend
