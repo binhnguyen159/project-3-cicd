@@ -4,29 +4,22 @@ orbs:
   slack: circleci/slack@4.10.1
 
 commands:
-  destroy_environment_fe:
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      # Add parameter here
+      stack-name:
+        type: string
+        default: fe
     steps:
       - run:
-          name: Destroy enviroment
+          name: Destroy environments
           when: on_fail
-          # ${CIRCLE_WORKFLOW_ID} is a Built-in environment variable
-          # ${CIRCLE_WORKFLOW_ID:0:5} takes the first 5 chars of the variable CIRCLE_CI_WORKFLOW_ID
           command: |
-            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-  destroy_environment_be:
-    steps:
-      - run:
-          name: Destroy enviroment
-          when: on_fail
-          # ${CIRCLE_WORKFLOW_ID} is a Built-in environment variable
-          # ${CIRCLE_WORKFLOW_ID:0:5} takes the first 5 chars of the variable CIRCLE_CI_WORKFLOW_ID
-          command: |
-            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name parameters.stack-name-${CIRCLE_WORKFLOW_ID:0:7}
+            exit 1
 
 jobs:
-  notify:
-    docker:
-      - image: "cimg/base:stable"
     steps:
       - slack/notify:
           custom: |
@@ -117,9 +110,13 @@ jobs:
             npm audit fix --audit-level=critical --force
             # If the "npm audit fix" command above could not fix all critical vulnerabilities, try “npm audit fix --force” again
 
-  deploy-infrastructure-fe:
+  deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
+    parameters: # parameters are at the job level
+      stack-name:
+        type: string
+        default: udapeople-frontend
     steps:
       - checkout
       - run: yum install -y tar gzip
@@ -130,14 +127,10 @@ jobs:
             --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
             --tags project=udapeople
-      - destroy_environment_fe
+            exit 1
+      - destroy_environment:
+          stack-name: udapeople-frontend
 
-  deploy-infrastructure-be:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run: yum install -y tar gzip
       - run:
           command: |
             # Use the workflow id to mark your CloudFormation stacks so that you can reference them later on (ex: rollback). 
@@ -146,24 +139,25 @@ jobs:
             --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
             --tags project=udapeople
-      - destroy_environment_be
+            exit 1
+      - destroy_environment:
+          stack-name: udapeople-backend
 
-  get_last_deployment_id:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run: yum install -y tar gzip
-      - run:
-          name: Fetch and save the old pipeline ID (bucket name) responsible for the last release.
-          command: |
-            aws cloudformation \
-            list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
-            --no-paginate --output text > ~/textfile.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - textfile.txt
+  # configure-infrastructure:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - add_ssh_keys:
+  #         fingerprints: ["d1:23:97:c1:61:b3:bc:13:43:10:11:32:2e:28:6c:70"]
+  #     - run:
+  #         name: Install ansible
+  #         command: |
+  #           apk add --update ansible
+  #     - run:
+  #         name: Run playbook and configure server
+  #         command: |
+  #           ansible-playbook -i inventory main.yml
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -184,8 +178,5 @@ workflows:
       - scan-backend:
           requires:
             - build-backend
-      - notify:
-          context: slack-secrets
-      - deploy-infrastructure-fe
-      - deploy-infrastructure-be
-      - get_last_deployment_id
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
