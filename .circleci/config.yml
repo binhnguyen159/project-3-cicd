@@ -125,7 +125,6 @@ jobs:
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
-      - image: amazon/aws-cli
     steps:
       - checkout
       - add_ssh_keys:
@@ -133,9 +132,7 @@ jobs:
       - run:
           name: Fetch and save the old pipeline ID (bucket name) responsible for the last release.
           command: |
-            aws cloudformation \
-            list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
-            --no-paginate --output text > ~/textfile.txt
+            ec2-3-84-15-243.compute-1.amazonaws.com > ~/textfile.txt
       - persist_to_workspace:
           root: ~/
           paths:
