@@ -142,10 +142,10 @@ jobs:
       - run:
           command: |
             cd .circleci/ansible
-            BACKEND_IP=$(aws ec2 describe-instances \
+            BACKEND_IP=\n$(aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
-            echo -e \n${BACKEND_IP} >> inventory.txt
+            echo -e ${BACKEND_IP} >> inventory.txt
             cat inventory.txt
       - persist_to_workspace:
           root: ~/
