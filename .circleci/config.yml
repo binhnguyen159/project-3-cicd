@@ -131,11 +131,11 @@ jobs:
           fingerprints: ["d1:23:97:c1:61:b3:bc:13:43:10:11:32:2e:28:6c:70"]
       # - run:  echo "hello world" > ~/output.txt
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
-            - project
-      - attach_workspace:
-          at: ~/
+            - .circleci/ansible/inventory
+      # - attach_workspace:
+      #     at: ~/
       - run:
           name: Install dependencies
           command: |
