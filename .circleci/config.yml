@@ -266,8 +266,6 @@ jobs:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - restore_cache:
-          keys: [backend-build]
       - add_ssh_keys:
           fingerprints: ["d1:23:97:c1:61:b3:bc:13:43:10:11:32:2e:28:6c:70"]
       - attach_workspace:
@@ -293,20 +291,11 @@ jobs:
           no_output_timeout: 30m
           command: |
             cd backend
-            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> .env
-            echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> .env
-            echo TYPEORM_HOST=$TYPEORM_HOST >> .env
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> .env
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> .env
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> .env
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> .env
-            echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> .env
-
             npm i
             npm run build
-            cp package* ./dist
+            # npm audit fix --force
             cd ..
-            echo "Zip the directory and copy it to ansible deploy role"
+            # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
