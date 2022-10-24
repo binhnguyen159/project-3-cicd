@@ -1,33 +1,27 @@
 ---
-- name: create backend directory on EC2
-  become: true
+- name: Creates App directory
   file:
-    path: /home/ubuntu/backend
+    path: ~/app
     state: directory
-    mode: 0755
 
-- name: copy files to backend
-  become: true
+- name: Upload app
   copy:
-    src: artifact.tar.gz
-    dest: /home/ubuntu/backend/artifact.tar.gz
-
-- name: unzip backend directory
+    src: project/artifact.tar
+    dest: "~/app"
+- name: Install dependencies
   become: true
   shell: |
-    cd /home/ubuntu/backend
-    tar -vxf artifact.tar.gz
-    rm -f artifact.tar.gz
+    curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+    apt-get install -y nodejs
+    apt-get install gcc g++ make -y
+    npm install -g npm
+    npm install -g pm2
+    cd /home/ubuntu/app
+    tar xf /home/ubuntu/app/artifact.tar
 
-- name: start application
-  become: true
+- name: Start backend
   shell: |
-    cd /home/ubuntu/backend
-    npm install
-    pm2 stop default
-    pm2 start npm -- start
-    cd dist
-    pm2 start main.js --update-env
+    /usr/bin/pm2 start /home/ubuntu/app/dist/main.js --name backend -f
   environment:
     ENVIRONMENT: production
     NODE_ENV: production
@@ -40,11 +34,32 @@
     TYPEORM_USERNAME: postgres
     TYPEORM_PASSWORD: postgres
     TYPEORM_DATABASE: uda-pro3
+# - name: start application
+#   become: true
+#   shell: |
+#     cd /home/ubuntu/backend
+#     npm install
+#     pm2 stop default
+#     pm2 start npm -- start
+#     cd dist
+#     pm2 start main.js --update-env
+#   environment:
+#     ENVIRONMENT: production
+#     NODE_ENV: production
+#     TYPEORM_CONNECTION: postgres
+#     TYPEORM_MIGRATIONS_DIR: ~/src/migrations
+#     TYPEORM_MIGRATIONS: ~/src/migrations/*.ts
+#     TYPEORM_ENTITIES: ~/src/modules/domain/**/*.entity.ts
+#     TYPEORM_HOST: udapeople.cvfalocpsmud.us-east-1.rds.amazonaws.com
+#     TYPEORM_PORT: 5432
+#     TYPEORM_USERNAME: postgres
+#     TYPEORM_PASSWORD: postgres
+#     TYPEORM_DATABASE: uda-pro3
 
-- name: print environment variables
-  become: true
-  shell: |
-    printenv
-  register: printenv_out
+# - name: print environment variables
+#   become: true
+#   shell: |
+#     printenv
+#   register: printenv_out
 
-- debug: var=printenv_out.stdout_lines
+# - debug: var=printenv_out.stdout_lines
