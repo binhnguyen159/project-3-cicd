@@ -8,7 +8,7 @@
 
 - name: copy files to backend
   become: yes
-  copy: 
+  copy:
     src: artifact.tar.gz
     dest: /home/ubuntu/backend/artifact.tar.gz
 
