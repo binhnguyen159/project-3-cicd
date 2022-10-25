@@ -432,8 +432,8 @@ jobs:
 workflows:
   p3-workflow:
     jobs:
-      # - build-frontend
-      # - build-backend
+      - build-frontend
+      - build-backend
       # - test-frontend:
       #     requires:
       #       - build-frontend
