@@ -14,8 +14,8 @@ commands:
           when: on_fail
           command: |
             aws s3 rb --force s3://udapeople-<< parameters.id >>
-            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
+            # aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.id >>
+            # aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.id >>
 
 jobs:
   build-frontend:
