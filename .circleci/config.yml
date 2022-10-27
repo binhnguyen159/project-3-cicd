@@ -216,7 +216,7 @@ jobs:
             echo "***************install library************************w"
             npm install --force
             echo "***************fix************************w"
-            npm audit fix
+            # npm audit fix
             echo "***************build************************w"
             npm run build
             echo "***************Run and save the migration output************************"
