@@ -2,4 +2,5 @@
 https://github.com/binhnguyen159/project-3-cicd
 
 2. Public URL for your S3 Bucket (aka, your green candidate front-end) [URL02]:
-http://udapeople-bc5cde1.s3-website-us-east-1.amazonaws.com/
+http://udapeople-5cbe9b4.s3-website-us-east-1.amazonaws.com/
+http://dke55ktnxwd8d.cloudfront.net/
