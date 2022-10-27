@@ -99,7 +99,7 @@ export class ConfigService {
     return {
       type: this.envConfig.TYPEORM_CONNECTION,
       host: this.envConfig.TYPEORM_HOST,
-      port: this.envConfig.TYPEORM_PORT,
+      port: 5432,
       username: this.envConfig.TYPEORM_USERNAME,
       password: this.envConfig.TYPEORM_PASSWORD,
       database: this.envConfig.TYPEORM_DATABASE,
