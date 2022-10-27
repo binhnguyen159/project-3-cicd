@@ -33,7 +33,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:14.18.1
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -49,7 +49,7 @@ jobs:
 
   test-frontend:
     docker:
-      - image: circleci/node:14.18.1
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -65,7 +65,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: circleci/node:14.18.1
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -81,7 +81,7 @@ jobs:
 
   test-backend:
     docker:
-      - image: circleci/node:14.18.1
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -96,7 +96,7 @@ jobs:
 
   scan-frontend:
     docker:
-      - image: circleci/node:14.18.1
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -115,7 +115,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: circleci/node:14.18.1
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -196,7 +196,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:14.18.1
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -228,7 +228,8 @@ jobs:
             npm install
             npm run build
             npm run migrations > migrations_dump.txt
-            cat migrations_dump.txt
+            echo "***************Migrations dumps below************************w"
+            cat migrations_dump.tx
       - run:
           name: Send migration results to memstash
           command: |
