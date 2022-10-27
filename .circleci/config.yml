@@ -106,9 +106,7 @@ jobs:
             cd frontend
             npm install
             # npm install oauth-sign@^0.9.0
-            npm audit fix --audit-level=critical --force
-            # If the "npm audit fix" command above could not fix all critical vulnerabilities, try “npm audit fix --force” again
-            npm audit --audit-level=critical
+            npm audit fix --audit-level=critical
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-scan
@@ -203,20 +201,6 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
-      # - run:
-      #     command: |
-      #       echo "Preparing environment for backend build build"
-      #       echo ENVIRONMENT=$ENVIRONMENT >> backend/.env
-      #       echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> backend/.env
-      #       echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> backend/.env
-      #       echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> backend/.env
-      #       echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> backend/.env
-      #       echo TYPEORM_HOST=$TYPEORM_HOST >> backend/.env
-      #       echo TYPEORM_PORT=$TYPEORM_PORT >> backend/.env
-      #       echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> backend/.env
-      #       echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> backend/.env
-      #       echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> backend/.env
-      #       cat backend/.env
       - run:
           name: install dependencies
           command: |
@@ -456,23 +440,23 @@ jobs:
 workflows:
   p3-workflow:
     jobs:
-      # - build-frontend:
-      #     filters:
-      #       branches:
-      #         only:
-      #           - master
+      - build-frontend:
+          filters:
+            branches:
+              only:
+                - master
       - build-backend:
           filters:
             branches:
               only:
                 - master
-      # - test-frontend:
-      #     requires:
-      #       - build-frontend
-      #     filters:
-      #       branches:
-      #         only:
-      #           - master
+      - test-frontend:
+          requires:
+            - build-frontend
+          filters:
+            branches:
+              only:
+                - master
       - test-backend:
           requires:
             - build-backend
@@ -480,13 +464,13 @@ workflows:
             branches:
               only:
                 - master
-      # - scan-frontend:
-      #     requires:
-      #       - build-frontend
-      #     filters:
-      #       branches:
-      #         only:
-      #           - master
+      - scan-frontend:
+          requires:
+            - build-frontend
+          filters:
+            branches:
+              only:
+                - master
       - scan-backend:
           requires:
             - build-backend
@@ -494,26 +478,26 @@ workflows:
             branches:
               only:
                 - master
-      # - deploy-infrastructure:
-      #     # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only:
-      #           - master
-      # - configure-infrastructure:
-      #     requires:
-      #       - deploy-infrastructure
-      #     filters:
-      #       branches:
-      #         only:
-      #           - master
-      # - run-migrations:
-      #     requires:
-      #       - configure-infrastructure
-      #     filters:
-      #       branches:
-      #         only:
-      #           - master
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only:
+                - master
+      - configure-infrastructure:
+          requires:
+            - deploy-infrastructure
+          filters:
+            branches:
+              only:
+                - master
+      - run-migrations:
+          requires:
+            - configure-infrastructure
+          filters:
+            branches:
+              only:
+                - master
       # - deploy-frontend:
       #     requires:
       #       - run-migrations
