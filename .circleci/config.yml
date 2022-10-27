@@ -28,7 +28,7 @@ commands:
           command: |
             cd ~/project/backend
             npm install
-            npm run migration:revert
+            npm run migrations:revert
 
 jobs:
   build-frontend:
@@ -225,6 +225,7 @@ jobs:
           command: |
             cd backend
             cat .env
+            touch migrations_dump.txt
             npm install
             npm run build
             npm run migrations > migrations_dump.txt
