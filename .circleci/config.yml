@@ -212,9 +212,9 @@ jobs:
             cd backend
             cat .env
             echo "***************npm cache clean --force************************w"
-            npm cache clean --force
+            # npm cache clean --force
             echo "***************install library************************w"
-            npm install
+            npm install --force
             echo "***************fix************************w"
             npm audit fix
             echo "***************build************************w"
